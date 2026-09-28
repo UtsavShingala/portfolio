@@ -24,6 +24,7 @@ import {
   type RegisteredSection,
   type SectionId,
 } from "./sections";
+import type { ProductDecision } from "./types";
 
 export const PUBLISHED = {
   products: PRODUCTS.filter((p) => !isPlaceholder(p.summary)),
@@ -35,6 +36,23 @@ export const PUBLISHED = {
   achievements: ACHIEVEMENTS.filter((a) => !isPlaceholder(a.label)),
   leadership: LEADERSHIP.filter((l) => !isPlaceholder(l.role)),
 };
+
+/**
+ * One role's decisions, grouped by `area` in first-seen order — the shape the
+ * Experience page lists under each role.
+ */
+export function decisionsByArea(
+  role: string,
+): { area: string; decisions: ProductDecision[] }[] {
+  const groups = new Map<string, ProductDecision[]>();
+
+  for (const decision of PUBLISHED.decisions) {
+    if (decision.role !== role) continue;
+    groups.set(decision.area, [...(groups.get(decision.area) ?? []), decision]);
+  }
+
+  return [...groups].map(([area, decisions]) => ({ area, decisions }));
+}
 
 const ALL_SECTIONS: readonly RegisteredSection[] = SECTIONS;
 const NUMBERED = ALL_SECTIONS.filter((s) => s.numbered !== false);

@@ -125,10 +125,18 @@ export interface DetailSection {
 }
 
 export interface ProductDecision {
-  /** URL segment: /product/<slug>. Keep it short and descriptive. */
+  /** URL segment: /decisions/<slug>. Keep it short and descriptive. */
   slug: string;
+  /**
+   * `id` of the experience entry this call was made in. Decisions are listed
+   * under that role on the Experience page, so one with no matching role is
+   * shown nowhere.
+   */
+  role: string;
+  /** Group label under the role, e.g. "AI". Groups keep first-seen order. */
+  area: string;
   title: string;
-  /** Shown on the card. */
+  /** Shown under the title on the decision's own page. */
   summary: string;
 
   /* The four fields — the at-a-glance summary at the top of the page. */

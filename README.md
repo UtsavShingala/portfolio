@@ -36,7 +36,7 @@ to change what the site says.**
 | Experience | `content/experience.ts` |
 | Projects | `content/projects/` — one file per project |
 | Architecture patterns | `content/architecture.ts` |
-| Product decisions | `content/product.ts` |
+| Product decisions (listed under their role in Experience) | `content/product.ts` |
 | Blog | `content/blogs/index.ts` |
 | Achievements | `content/achievements.ts` |
 | Leadership | `content/leadership.ts` |

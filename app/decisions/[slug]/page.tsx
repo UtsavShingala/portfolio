@@ -36,7 +36,10 @@ export default async function DecisionPage({
 
   if (!decision) notFound();
 
-  const section = getSection("decisions");
+  // Decisions live under the role they were made in, so the page takes that
+  // section's accent and leads back to the role's list of decisions.
+  const section = getSection("experience");
+  const role = PUBLISHED.experience.find((entry) => entry.id === decision.role);
 
   return (
     <div data-accent={section.accent ?? "green"} className="relative isolate">
@@ -47,13 +50,24 @@ export default async function DecisionPage({
 
       <Container className="pt-16 pb-section">
         <Link
-          href="/decisions"
+          href={`/experience#${decision.role}-decisions`}
           className="inline-flex items-center gap-2 font-mono text-sm text-muted transition-colors hover:text-section-accent"
         >
           <span aria-hidden="true">←</span> {section.label.toLowerCase()}
         </Link>
 
-        <h1 className="mt-10 max-w-3xl text-4xl tracking-tight sm:text-5xl">
+        {role ? (
+          <p className="mt-10 font-mono text-xs tracking-[0.15em] text-muted">
+            {role.role} · {role.period} · {decision.area}
+          </p>
+        ) : null}
+
+        <h1
+          className={cn(
+            "max-w-3xl text-4xl tracking-tight sm:text-5xl",
+            role ? "mt-4" : "mt-10",
+          )}
+        >
           {decision.title}
         </h1>
 

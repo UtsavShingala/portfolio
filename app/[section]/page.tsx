@@ -12,7 +12,6 @@ import { isPlaceholder } from "@/lib/placeholder";
 import { Experience } from "@/components/sections/Experience";
 import { Projects } from "@/components/sections/Projects";
 import { Architecture } from "@/components/sections/Architecture";
-import { Product } from "@/components/sections/Product";
 import { Products } from "@/components/sections/Products";
 import { Blogs } from "@/components/sections/Blogs";
 import { Achievements } from "@/components/sections/Achievements";
@@ -31,7 +30,6 @@ const SECTION_VIEWS: Record<SectionId, ComponentType> = {
   projects: Projects,
   architecture: Architecture,
   products: Products,
-  decisions: Product,
   blogs: Blogs,
   achievements: Achievements,
   leadership: Leadership,

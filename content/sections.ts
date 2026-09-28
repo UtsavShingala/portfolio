@@ -71,14 +71,8 @@ export const SECTIONS = [
     intro:
       "General patterns from production work: the shape of each system, and the decisions that made it hold up.",
   },
-  {
-    id: "decisions",
-    label: "Product decisions",
-    heading: "Product decisions",
-    accent: "amber",
-    intro:
-      "Product calls I've made — the problem, the options, what I chose, and what it cost.",
-  },
+  // Product decisions have no section of their own: each is listed under the
+  // role it was made in, on the Experience page (see content/product.ts).
   {
     id: "achievements",
     label: "Achievements",
