@@ -1,26 +1,199 @@
 @import "tailwindcss";
 
+/*
+ * Design tokens — the single source of truth for the whole site.
+ * Never write a raw hex in a component; add it here and use the generated
+ * utility (bg-bg, text-muted, border-border, ...).
+ *
+ * Dark is the default. `data-theme="light"` on <html> swaps the values; the
+ * Tailwind utilities below read them through var(), so nothing else changes.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #0a0a0b;
+  --card: #141416;
+  --line: #232326;
+  --text: #ededef;
+  --muted: #8a8a93;
+  --accent: #4ade80;
+  /* Faint backdrop grid — deliberately weaker than --line. */
+  --grid: #17171a;
+
+  /* Section hues. Green stays the site's primary; the rest give each section
+     page its own identity without introducing a second design language. */
+  --hue-green: #4ade80;
+  --hue-blue: #60a5fa;
+  --hue-violet: #a78bfa;
+  --hue-amber: #fbbf24;
+  --hue-cyan: #22d3ee;
+  --hue-rose: #f472b6;
+
+  color-scheme: dark;
+}
+
+/*
+ * Light palette, derived from the dark one rather than eyeballed.
+ * The accent has to change hex: #4ade80 on a near-white background is roughly
+ * 1.7:1, which fails for the small text it is used on (section numbers, tech
+ * tags). #15803d lands near 4.6:1 and keeps the same green character.
+ */
+:root[data-theme="light"] {
+  --bg: #f7f7f8;
+  --card: #ffffff;
+  --line: #e4e4e7;
+  --text: #18181b;
+  --muted: #6b6b75;
+  --accent: #15803d;
+  --grid: #e8e8eb;
+
+  /* Every hue is darkened for light mode — the dark-mode values sit between
+     1.5:1 and 2:1 on a near-white background and fail for small text. */
+  --hue-green: #15803d;
+  --hue-blue: #1d4ed8;
+  --hue-violet: #6d28d9;
+  --hue-amber: #a16207;
+  --hue-cyan: #0e7490;
+  --hue-rose: #be185d;
+
+  color-scheme: light;
+}
+
+/*
+ * Per-section accent. `data-accent` is set from the section registry, so the
+ * colour is content, not a hardcoded class. Defaults to the primary green.
+ */
+:root,
+[data-accent="green"] {
+  --section-accent: var(--hue-green);
+}
+[data-accent="blue"] {
+  --section-accent: var(--hue-blue);
+}
+[data-accent="violet"] {
+  --section-accent: var(--hue-violet);
+}
+[data-accent="amber"] {
+  --section-accent: var(--hue-amber);
+}
+[data-accent="cyan"] {
+  --section-accent: var(--hue-cyan);
+}
+[data-accent="rose"] {
+  --section-accent: var(--hue-rose);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-card: var(--card);
+  --color-border: var(--line);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-grid: var(--grid);
+  /* Resolves to the nearest [data-accent] ancestor, else the primary green. */
+  --color-section-accent: var(--section-accent);
+
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@theme {
+  /* Nav collapses to a hamburger below this. Raised twice: once when the
+     section count reached eight, again when two labels became two words. The
+     full row needs roughly 1100px, so this leaves a little headroom. */
+  --breakpoint-nav: 1200px;
+
+  /* vertical rhythm between sections (the 80–100px band) */
+  --spacing-section: 5.5rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Reserve the scrollbar lane on every page. Without it, short pages have
+       no scrollbar and the whole header shifts sideways between routes. */
+    scrollbar-gutter: stable;
+  }
+
+  /* Set for one frame while the theme flips (see ThemeToggle). Elements with
+     transition-colors would otherwise fade to the new theme while everything
+     else snaps, so the page changed colour in a visible stagger. */
+  .theme-switching,
+  .theme-switching *,
+  .theme-switching *::before,
+  .theme-switching *::after {
+    transition: none !important;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-weight: 400;
+  }
+
+  /* Two weights only across the site: 400 and 500. Never 600/700. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 500;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /*
+   * Backdrop layers. Both are fixed, non-interactive and sit behind everything.
+   * The grid is masked so it fades out down the page instead of tiling forever;
+   * the glow is a single soft wash of accent at the top.
+   */
+  .backdrop-grid {
+    background-image:
+      linear-gradient(var(--color-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
+    background-size: 64px 64px;
+    -webkit-mask-image: radial-gradient(
+      ellipse 100% 55% at 50% 0%,
+      #000 35%,
+      transparent 100%
+    );
+    mask-image: radial-gradient(
+      ellipse 100% 55% at 50% 0%,
+      #000 35%,
+      transparent 100%
+    );
+  }
+
+  /* Takes the section hue when inside one, the primary green otherwise. */
+  .backdrop-glow {
+    background-image: radial-gradient(
+      48rem 28rem at 50% -18%,
+      color-mix(in oklab, var(--section-accent, var(--accent)) 9%, transparent),
+      transparent 70%
+    );
+  }
+}
+
+/* The only motion on the site is a hover state and the expand transition.
+   Both are cut here for users who ask for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

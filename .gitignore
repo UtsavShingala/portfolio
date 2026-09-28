@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ask/knowledge pipeline
+# Raw source documents and machine extraction output never get committed.
+# Only knowledge/curated (reviewed by hand) and knowledge/index (built) do.
+/knowledge/sources/*
+!/knowledge/sources/.gitkeep
+/knowledge/staging/*
+!/knowledge/staging/.gitkeep
